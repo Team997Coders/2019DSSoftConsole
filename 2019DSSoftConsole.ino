@@ -3,20 +3,10 @@
 #include <GD2.h>
 #include "enums.h"
 
-ARTIFACT_ENUM artifact = None;
+ARTIFACT_ENUM artifact = GamePiece;
 DIRECTION_ENUM direction = Back;
-DESTINATION_ENUM destination = None;
-
-/*
-
-enum positionHeight {
-  None,
-  Low,
-  Meduim,
-  High
-}
-
-*/
+DESTINATION_ENUM destination = Destination;
+HEIGHT_ENUM height = Height;
 
 // Define joystick ids for joystick HID events sent to host
 const int hatchJoystickButtonId = 1;
@@ -30,7 +20,7 @@ const int rocketJoystickButtonId = 8;
 const int cargoShipJoystickButtonId = 9;
 const int highHeightJoystickButtonId = 10;
 const int cancelJoystickButtonId = 11;
-const int intakeJoystickButtonId = 12;
+const int loadingStationJoystickButtonId = 12;
 const int AJoystickButtonId = 13;
 const int BJoystickButtonId = 14;
 const int XJoystickButtonId = 15;
@@ -40,14 +30,15 @@ const int rightJoystickHatAngle = 45;
 
 static byte prevtag;
 
+#define TAG_ARTIFACT  200
+#define TAG_DIRECTION 201
+#define TAG_DESTINATION 202
+#define TAG_HEIGHT 203
+
 void setup()
 {
   GD.begin();
 }
-
-#define TAG_ARTIFACT  200
-#define TAG_DIRECTION 201
-#define TAG_DESTINATION 202
 
 void loop()
 {
@@ -61,7 +52,7 @@ void loop()
     switch (GD.inputs.tag) {
       case TAG_ARTIFACT:
         switch(artifact) {
-          case None:
+          case GamePiece:
           case Hatch:
             artifact = Ball;
             Joystick.button(ballJoystickButtonId, HIGH);
@@ -86,7 +77,7 @@ void loop()
         break;
       case TAG_DESTINATION:
         switch(destination) {
-          case None:
+          case Destination:
           case CargoShip:
             destination = Rocket;
             Joystick.button(rocketJoystickButtonId, HIGH);
@@ -96,7 +87,28 @@ void loop()
             Joystick.button(loadingStationJoystickButtonId, HIGH);
             break;
           case LoadingStation:
+            destination = CargoShip;
+            Joystick.button(cargoShipJoystickButtonId, HIGH);
+            break;            
         }
+        break;
+      case TAG_HEIGHT:
+        switch(height) {
+          case Height:
+          case Low:
+            height = High;
+            Joystick.button(highHeightJoystickButtonId, HIGH);
+            break;
+          case Medium:
+            height = Low;
+            Joystick.button(lowHeightJoystickButtonId, HIGH);
+            break;
+          case High:
+            height = Medium;
+            Joystick.button(mediumHeightJoystickButtonId, HIGH);
+            break;
+        }
+        break;
     }
   } else {
     // There is a button release
@@ -104,10 +116,10 @@ void loop()
       switch (prevtag) {
         case TAG_ARTIFACT:
           switch(artifact) {
+            case GamePiece:
             case Ball:
               Joystick.button(ballJoystickButtonId, LOW);
               break;
-            case None:
             case Hatch:
               Joystick.button(hatchJoystickButtonId, LOW);
               break;
@@ -120,6 +132,34 @@ void loop()
               break;
             case Front:
               Joystick.button(frontJoystickButtonId, LOW);
+              break;
+          }
+          break;
+        case TAG_DESTINATION:
+          switch(destination) {
+            case Destination:
+            case Rocket:
+              Joystick.button(rocketJoystickButtonId, LOW);
+              break;
+            case CargoShip:
+              Joystick.button(cargoShipJoystickButtonId, LOW);
+              break;
+            case LoadingStation:
+              Joystick.button(loadingStationJoystickButtonId, LOW);
+              break;
+          }
+          break;
+        case TAG_HEIGHT:
+          switch(height) {
+            case Height:
+            case High:
+              Joystick.button(highHeightJoystickButtonId, LOW);
+              break;
+            case Medium:
+              Joystick.button(mediumHeightJoystickButtonId, LOW);
+              break;
+            case Low:
+              Joystick.button(lowHeightJoystickButtonId, LOW);
               break;
           }
           break;
@@ -145,6 +185,12 @@ void loop()
 
   GD.Tag(TAG_ARTIFACT);
   GD.cmd_button(8, 42, 60, 30, 28, 0, ARTIFACT_STRING[artifact]);
+
+  GD.Tag(TAG_DESTINATION);
+  GD.cmd_button(8, 80, 60, 30, 28, 0, DESTINATION_STRING[destination]);
+
+  GD.Tag(TAG_HEIGHT);
+  GD.cmd_button(8, 118, 60, 30, 28, 0, HEIGHT_STRING[height]);
 
   GD.swap();
 }

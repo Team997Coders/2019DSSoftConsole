@@ -1,0 +1,46 @@
+#ifndef H_ENUMS
+#define H_ENUMS
+
+#define FOREACH_ARTIFACT(ARTIFACT) \
+        ARTIFACT(None)   \
+        ARTIFACT(Ball)  \
+        ARTIFACT(Hatch)   \
+
+#define GENERATE_ENUM(ENUM) ENUM,
+#define GENERATE_STRING(STRING) #STRING,
+
+enum ARTIFACT_ENUM {
+    FOREACH_ARTIFACT(GENERATE_ENUM)
+};
+
+static const char *ARTIFACT_STRING[] = {
+    FOREACH_ARTIFACT(GENERATE_STRING)
+};
+
+#define FOREACH_DIRECTION(DIRECTION) \
+        DIRECTION(Back)   \
+        DIRECTION(Front)  \
+
+enum DIRECTION_ENUM {
+    FOREACH_DIRECTION(GENERATE_ENUM)
+};
+
+static const char *DIRECTION_STRING[] = {
+    FOREACH_DIRECTION(GENERATE_STRING)
+};
+
+#define FOREACH_DESTINATION(DESTINATION) \
+        DESTINATION(None)   \
+        DESTINATION(Rocket)  \
+        DESTINATION(CargoShip)  \
+        DESTINATION(LoadingStation)  \
+
+enum DESTINATION_ENUM {
+    FOREACH_DESTINATION(GENERATE_ENUM)
+};
+
+static const char *DESTINATION_STRING[] = {
+    FOREACH_DESTINATION(GENERATE_STRING)
+};
+
+#endif // H_ENUMS

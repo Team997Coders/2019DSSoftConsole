@@ -19,11 +19,12 @@ const int backJoystickButtonId = 7;
 const int rocketJoystickButtonId = 8;
 const int cargoShipJoystickButtonId = 9;
 const int highHeightJoystickButtonId = 10;
-const int cancelJoystickButtonId = 11;
+const int outakeJoystickButtonId = 11;
 const int loadingStationJoystickButtonId = 12;
 const int AJoystickButtonId = 13;
 const int BJoystickButtonId = 14;
 const int XJoystickButtonId = 15;
+const int intakeJoystickButtonId = 16;
 const int leftJoystickHatAngle = 315;
 const int centerJoystickHatAngle = 0;
 const int rightJoystickHatAngle = 45;
@@ -34,6 +35,11 @@ static byte prevtag;
 #define TAG_DIRECTION 201
 #define TAG_DESTINATION 202
 #define TAG_HEIGHT 203
+#define TAG_ACTIVATE 204
+#define TAG_INTAKE 205
+#define TAG_OUTAKE 206
+#define TAG_TILT 207
+#define TAG_PAN 208
 
 void setup()
 {
@@ -109,6 +115,15 @@ void loop()
             break;
         }
         break;
+      case TAG_ACTIVATE:
+        Joystick.button(activateJoystickButtonId, HIGH);
+        break;
+      case TAG_INTAKE:
+        Joystick.button(intakeJoystickButtonId, HIGH);
+        break;
+      case TAG_OUTAKE:
+        Joystick.button(outakeJoystickButtonId, HIGH);
+        break;
     }
   } else {
     // There is a button release
@@ -163,6 +178,15 @@ void loop()
               break;
           }
           break;
+      case TAG_ACTIVATE:
+        Joystick.button(activateJoystickButtonId, LOW);
+        break;
+      case TAG_INTAKE:
+        Joystick.button(intakeJoystickButtonId, LOW);
+        break;
+      case TAG_OUTAKE:
+        Joystick.button(outakeJoystickButtonId, LOW);
+        break;
       }
     }
   }
@@ -178,19 +202,37 @@ void loop()
   GD.Begin(RECTS);
 
   GD.Vertex2ii(8, 8);
-  GD.Vertex2ii(128, 128);
+  GD.Vertex2ii(120, 244);
 
   GD.Tag(TAG_DIRECTION);
-  GD.cmd_button(8, 8, 60, 30, 28, 0, DIRECTION_STRING[direction]);
+  GD.cmd_button(8, 8, 110, 30, 27, 0, DIRECTION_STRING[direction]);
 
   GD.Tag(TAG_ARTIFACT);
-  GD.cmd_button(8, 42, 60, 30, 28, 0, ARTIFACT_STRING[artifact]);
+  GD.cmd_button(8, 42, 110, 30, 27, 0, ARTIFACT_STRING[artifact]);
 
   GD.Tag(TAG_DESTINATION);
-  GD.cmd_button(8, 80, 60, 30, 28, 0, DESTINATION_STRING[destination]);
+  GD.cmd_button(8, 76, 110, 30, 27, 0, DESTINATION_STRING[destination]);
 
   GD.Tag(TAG_HEIGHT);
-  GD.cmd_button(8, 118, 60, 30, 28, 0, HEIGHT_STRING[height]);
+  GD.cmd_button(8, 110, 110, 30, 27, 0, HEIGHT_STRING[height]);
 
+  GD.Tag(TAG_ACTIVATE);
+  GD.cmd_button(8, 144, 110, 30, 27, 0, "Activate");
+
+  GD.Tag(TAG_INTAKE);
+  GD.cmd_button(8, 178, 110, 30, 27, 0, "Intake");
+
+  GD.Tag(TAG_OUTAKE);
+  GD.cmd_button(8, 212, 110, 30, 27, 0, "Outake");
+
+  // Tilt slider
+  GD.Tag(TAG_TILT);
+  GD.cmd_slider(133, 8, 11, 240, 0, 90, 180);
+
+  // Pan slider
+  GD.Tag(TAG_PAN);
+  GD.cmd_slider(155, 240, 300, 11, 0, 90, 180);
+
+  // Show buffer
   GD.swap();
 }
